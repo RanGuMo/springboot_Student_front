@@ -1,29 +1,65 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
 import HomeView from '../views/HomeView.vue'
+import Layout from "@/views/Layout";
+import RegisterView from "@/views/RegisterView";
 
 Vue.use(VueRouter)
 
 const routes = [
-  {
-    path: '/',
-    name: 'home',
-    component: HomeView
-  },
-  {
-    path: '/about',
-    name: 'about',
-    // route level code-splitting
-    // this generates a separate chunk (about.[hash].js) for this route
-    // which is lazy-loaded when the route is visited.
-    component: () => import(/* webpackChunkName: "about" */ '../views/AboutView.vue')
-  }
+    {
+        path: '/login',
+        name: 'login',
+        component: () => import('@/views/LoginView')
+    },
+    {
+        path: '/register',
+        name: 'Register',
+        component: RegisterView
+    },
+    {
+        path: '/',
+        name: 'Layout',
+        component: Layout,
+        children: [ // 子路由
+            {
+                path: '',
+                name: 'home',
+                component: HomeView
+            },
+            {
+                path: 'admin',
+                name: 'admin',
+                component: () => import('../views/AdminView.vue')
+            },
+            {
+                path: 'book',
+                name: 'book',
+                component: () => import('../views/BookView.vue')
+            },
+            {
+                path: 'type',
+                name: 'type',
+                component: () => import('../views/TypeView.vue')
+            }
+        ]
+    },
 ]
 
 const router = new VueRouter({
-  mode: 'history',
-  base: process.env.BASE_URL,
-  routes
+    mode: 'history',
+    base: process.env.BASE_URL,
+    routes
 })
+
+// 路由守卫
+router.beforeEach((to ,from, next) => {
+    const user = localStorage.getItem("user");
+    if (!user && to.path !== '/login' && to.path !== '/register') {
+        return next("/login");
+    }
+    next();
+})
+
 
 export default router
