@@ -44,6 +44,9 @@
               <el-menu-item index="/type">
                 <i class="el-icon-cold-drink"></i><span>分类管理</span>
               </el-menu-item>
+              <el-menu-item index="/audit">
+                <i class="el-icon-cold-drink"></i><span>请假审核</span>
+              </el-menu-item>
             </el-menu-item-group>
           </el-submenu>
         </el-menu>
