@@ -53,6 +53,9 @@
               <el-menu-item index="/reserve">
                 <i class="el-icon-cold-drink"></i><span>酒店预约</span>
               </el-menu-item>
+              <el-menu-item index="/log">
+                <i class="el-icon-cold-drink"></i><span>日志管理</span>
+              </el-menu-item>
             </el-menu-item-group>
           </el-submenu>
         </el-menu>

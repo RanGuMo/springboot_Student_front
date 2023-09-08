@@ -56,6 +56,11 @@ const routes = [
                 path: 'reserve',
                 name: 'reserve',
                 component: () => import('../views/ReserveView.vue')
+            },
+            {
+                path: 'log',
+                name: 'log',
+                component: () => import('../views/LogView.vue')
             }
         ]
     },
