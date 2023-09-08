@@ -61,6 +61,11 @@ const routes = [
                 path: 'log',
                 name: 'log',
                 component: () => import('../views/LogView.vue')
+            },
+            {
+                path: 'notice',
+                name: 'notice',
+                component: () => import('../views/NoticeView.vue')
             }
         ]
     },
