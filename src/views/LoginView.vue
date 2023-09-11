@@ -15,8 +15,18 @@
             <el-input v-model="admin.password" show-password prefix-icon="el-icon-lock" style="width: 80%"
                       placeholder="请输入密码"></el-input>
           </el-form-item>
+          <!--验证码-->
           <el-form-item>
-            <el-button style="width: 80%; margin-top: 10px" type="primary" @click="login()" size="default">登录</el-button>
+            <div style="display: flex; justify-content: center">
+              <el-input v-model="admin.verCode" prefix-icon="el-icon-s-opportunity" style="width: 42%; margin-right: 10px"
+                        placeholder="请输入验证码"></el-input>
+              <img :src="captchaUrl" @click="clickImg()" width="36%" height="33px"/>
+            </div>
+          </el-form-item>
+
+          <el-form-item>
+            <el-button style="width: 80%; margin-top: 10px" type="primary" @click="login()" size="default">登录
+            </el-button>
           </el-form-item>
           <div style="text-align: center">
             未有账号？<a href="javascript:void(0)" style="text-decoration: none" @click="$router.push('/register')">点击注册</a>
@@ -36,24 +46,31 @@ export default {
   name: "login",
   data() {
     return {
-      admin: {}
+      admin: {},
+      key:'',
+      captchaUrl:''
     }
   },
+  mounted() {
+    this.clickImg();
+  },
   methods: {
+    //点击验证码图片，切换验证码
+    clickImg(){
+      this.key = Math.random();
+      this.captchaUrl="http://localhost:9528/api/captcha?key="+this.key;
+    },
     login() {
-      request.post("/admin/login", this.admin).then(res => {
+      request.post("/admin/login?key="+this.key, this.admin).then(res => {
         if (res.code === '0') {
-          this.$message({
-            message: '登录成功',
-            type: 'success'
-          });
+          this.$message.success("登录成功")
           localStorage.setItem("user", JSON.stringify(res.data))
           this.$router.push("/");
         } else {
-          this.$message({
-            message: res.msg,
-            type: 'error'
-          });
+          this.$message.error(res.msg);
+        //  验证码不正确就更换验证码
+          this.clickImg();
+          this.admin.verCode = '';
         }
       })
     }
