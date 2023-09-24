@@ -23,6 +23,11 @@
           </template>
         </el-table-column>
         <el-table-column prop="name" label="图书名称" width="150" align="center"></el-table-column>
+        <el-table-column label="图书介绍">
+          <template slot-scope="scope">
+            <el-button type="success" @click="viewEditor(scope.row.content)">点击查看</el-button>
+          </template>
+        </el-table-column>
         <el-table-column prop="author" label="图书作者" width="120" align="center"></el-table-column>
         <el-table-column prop="price" label="图书价格" width="80" align="center"></el-table-column>
         <el-table-column prop="press" label="图书出版社" align="center"></el-table-column>
@@ -44,7 +49,7 @@
     </el-card>
     <!--新增或者编辑的弹窗-->
     <div>
-      <el-dialog title="请填写信息" :visible.sync="dialogFormVisible" width="30%">
+      <el-dialog title="请填写信息" :visible.sync="dialogFormVisible" width="40%">
         <el-form :model="form">
           <el-form-item label="图书名称" label-width="20%">
             <el-input v-model="form.name" autocomplete="off" style="width: 90%"></el-input>
@@ -76,12 +81,22 @@
               <el-option v-for="item in typeObjs" :key="item.id" :label="item.name" :value="item.id"></el-option>
             </el-select>
           </el-form-item>
+
+          <el-form-item label="图书介绍" label-width="20%">
+            <div id="editor" style="width: 90%"></div>
+          </el-form-item>
         </el-form>
         <div slot="footer" class="dialog-footer">
           <el-button @click="dialogFormVisible = false">取 消</el-button>
           <el-button type="primary" @click="submit()">确 定</el-button>
         </div>
       </el-dialog>
+
+
+      <el-dialog title="图书介绍" :visible.sync="editorVisible" width="50%">
+        <div v-html="this.viewData" class="w-e-text"></div>
+      </el-dialog>
+
     </div>
 
     <!--    分页器-->
@@ -101,6 +116,24 @@
 
 <script>
 import request from "@/utils/request";
+import E from 'wangeditor' // 富文本编辑器
+
+// 富文本的初始化方法
+let editor
+
+function initWangEditor(content) {
+  setTimeout(() => {
+    if (!editor) {
+      editor = new E('#editor')
+      editor.config.placeholder = '请输入内容'
+      editor.config.uploadFileName = 'file'
+      editor.config.uploadImgServer = 'http://localhost:9528/api/files/wang/upload'
+      editor.create()
+    }
+    editor.txt.html(content)
+  }, 0)
+}
+
 
 export default {
   name: 'admin',
@@ -115,12 +148,13 @@ export default {
       },
       total: 0, //总记录数
       dialogFormVisible: false, //新增弹出框的显示与隐藏
+      editorVisible: false, // 富文本内容的显示与隐藏
       form: {},
       tableData: [],
       loading: false,
       imageUrl: '',
-      typeObjs: [] //分类下拉框的数据
-
+      typeObjs: [], //分类下拉框的数据
+      viewData:'',// 富文本内容展示
     }
   },
   created() {
@@ -178,6 +212,7 @@ export default {
     add() {
       this.imageUrl = '';
       this.form = {};
+      initWangEditor(""); //新增 赋值给富文本为空
       this.dialogFormVisible = true;
     },
     // 6.编辑打开弹窗
@@ -185,6 +220,7 @@ export default {
       obj = JSON.parse(JSON.stringify(obj)); //深拷贝
       this.imageUrl = 'http://localhost:9528/api/files/' + obj.img;
       this.form = obj
+      initWangEditor(obj.content?obj.content:"")//编辑 赋值给富文本
       this.dialogFormVisible = true;
     },
     //7.删除事件
@@ -200,6 +236,7 @@ export default {
     },
     //8.新增或修改的确定按钮
     submit() {
+      this.form.content = editor.txt.html(); //富文本的内容赋值给content字段
       request.post("/book", this.form).then(res => {
         if (res.code === '0') {
           this.$message.success("操作成功");
@@ -232,6 +269,11 @@ export default {
     //10.图片下载
     down(flag) {
       location.href = 'http://localhost:9528/api/files/' + flag
+    },
+    //  11.点击查看 按钮
+    viewEditor(data){
+      this.viewData = data;
+      this.editorVisible=true;
     }
   }
 }
