@@ -1,4 +1,4 @@
-# springboot后端接口学习的前端，主要技术栈为vue2+elementUI+axios+echarts+富文本
+# springboot后端接口学习的前端，主要技术栈为vue2+elementUI+axios+echarts+wangEditor4富文本
 # vue
 
 ## Project setup
