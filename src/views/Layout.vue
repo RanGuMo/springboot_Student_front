@@ -3,7 +3,7 @@
     <el-container>
       <el-header style="background-color: #4c535a">
         <img src="@/assets/logo.png" alt="" style="width: 40px; position: relative; top: 10px;">
-        <span style="font-size: 18px; margin-left: 15px; color: white">手拉手带小白做毕设</span>
+        <span style="font-size: 18px; margin-left: 15px; color: white">SpringBoot_Study_front</span>
 
         <el-dropdown style="float: right; height: 60px; line-height: 60px">
           <span class="el-dropdown-link" style="color: white; font-size: 16px">{{ user.name }}<i
